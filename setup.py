@@ -29,6 +29,11 @@ setup(
         'Programming Language :: Python :: 3.8',
     ],
     description="webOS device manager",
+    entry_points={
+        'console_scripts': [
+            'wdm=wdm.cli:main',
+        ],
+    },
     install_requires=requirements,
     license="MIT license",
     long_description=readme + '\n\n' + history,
