@@ -4,8 +4,8 @@ import sys
 
 
 def main():
-    """Console script for wdm."""
-    parser = argparse.ArgumentParser()
+    """webOS device manager : Command line application to manage webOS Emulators"""
+    parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument('_', nargs='*')
     args = parser.parse_args()
 
