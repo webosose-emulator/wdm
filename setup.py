@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 
 """The setup script."""
+import os
 
 from setuptools import setup, find_packages
+
+here = os.path.abspath(os.path.dirname(__file__))
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
+
+with open(os.path.join(here, "wdm", "version.py")) as version_file:
+    exec(version_file.read())
 
 requirements = [ ]
 
@@ -44,6 +50,6 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/heegoo-han/wdm',
-    version='0.1.0',
+    version=__version__,
     zip_safe=False,
 )

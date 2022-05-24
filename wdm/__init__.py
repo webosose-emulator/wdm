@@ -3,3 +3,5 @@
 __author__ = """Heegoo Han"""
 __email__ = 'hghan9@gmail.com'
 __version__ = '0.1.0'
+
+from wdm.version import __version__
