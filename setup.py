@@ -49,7 +49,7 @@ setup(
     packages=find_packages(include=['wdm', 'wdm.*']),
     test_suite='tests',
     tests_require=test_requirements,
-    url='https://github.com/heegoo-han/wdm',
+    url='https://github.com/webosose-emulator/wdm',
     version=__version__,
     zip_safe=False,
 )
