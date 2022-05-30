@@ -6,9 +6,6 @@ wdm
 .. image:: https://img.shields.io/pypi/v/wdm.svg
         :target: https://pypi.python.org/pypi/wdm
 
-.. image:: https://img.shields.io/travis/heegoo-han/wdm.svg
-        :target: https://travis-ci.com/heegoo-han/wdm
-
 .. image:: https://readthedocs.org/projects/wdm/badge/?version=latest
         :target: https://wdm.readthedocs.io/en/latest/?version=latest
         :alt: Documentation Status
