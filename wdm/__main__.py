@@ -7,7 +7,6 @@ This module implements the developer interface for wdm.
 from typing import Optional
 
 import wdm
-from wdm.check import is_device_running
 class WebosDevice:
     """Core developer interface for wdm."""
     
@@ -21,43 +20,54 @@ class WebosDevice:
             A webOS device name.
         """
         self._name = name
-        self._cpus: Optional[int] = 2  # number of CPUs
-        self._ram: Optional[int] = 4096  # vm RAM, MBs
-        self._vram: Optional[int] = 128  # vm video RAM, MBs
-        self._hostssh: Optional[int] = 6622 # host to device ssh port number
+        self._cpus: Optional[str] = '2'  # number of CPUs
+        self._ram: Optional[str] = '4096'  # vm RAM, MBs
+        self._vram: Optional[str] = '128'  # vm video RAM, MBs
+        self._hostssh: Optional[str] = '6622' # host to device ssh port number
+        self._image: Optional[str] = None # image name if exists
         
-        @property
-        def name(self):
-            """Return webOS device name"""
-            return self._name
+    @property
+    def name(self):
+        """Return webOS device name"""
+        return self._name
         
-        @property
-        def cpus(self):
-            """Return webOS device number of CPUs """
-            return self._cpus
+    @property
+    def cpus(self):
+        """Return webOS device number of CPUs """
+        return self._cpus
         
-        @property
-        def ram(self):
-            """Return webOS device RAM size in MBs"""
-            return self._ram
+    @property
+    def ram(self):
+        """Return webOS device RAM size in MBs"""
+        return self._ram
         
-        @property
-        def vram(self):
-            """Return webOS device Video RAM size in MBs"""
-            return self._vram
+    @property
+    def vram(self):
+        """Return webOS device Video RAM size in MBs"""
+        return self._vram
         
-        @property
-        def hostssh(self):
-            """Return webOS device host to device ssh port number"""
-            return self._hostssh
+    @property
+    def hostssh(self):
+        """Return webOS device host to device ssh port number"""
+        return self._hostssh
+    
+    @property
+    def image(self):
+        """Return image"""
+        return self._image
+    
+    @image.setter
+    def image(self, value):
+        """Sets the image"""
+        self._image = value
         
     def create(self):
         """Create a webOS device
             
         For now, webOS device is emulator.
         Default emulator device is webOS OSE emulator.
+        This method will be removed soon.
             
         """
-        print("create")
-        is_device_running(self._name)
+        pass
         
