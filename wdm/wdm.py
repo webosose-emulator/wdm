@@ -10,14 +10,15 @@ from wdm import WebosDevice
 STDIN = DEVNULL  # quiet, None for info level
 
 from wdm.check import get_vboxmanage, is_safe_to_create, is_vm_exists
+from wdm.check import VBOXM
 
-def detach_storage(vmcmd, name):
+def detach_storage(name):
     """detach the image from the vm
 
     Args:
-        vmcmd (str): virtualizer command
         name (str): vm name
     """
+    vmcmd = VBOXM
     command = [vmcmd] + ['storageattach', name, '--storagectl', name, '--type',
                          'hdd', '--medium', 'emptydrive', '--port', '0', '--device', '0']
     if subprocess.call(command, stdin=STDIN) == 0:
@@ -45,14 +46,12 @@ def remove_vm(name):
     Args:
         name (str): vm name
     """
-    global VBOXM
-    VBOXM, VBOXVER = get_vboxmanage("vboxmanage")
     if VBOXM == None:
         print("Please install virtualbox.")
         return False
     
-    if is_vm_exists(VBOXM, name):
-        detach_storage(VBOXM, name)
+    if is_vm_exists(name):
+        detach_storage(name)
         command = [VBOXM] + ['unregistervm', name, '--delete']
         if subprocess.call(command, stdin=STDIN) == 0:
             return True
@@ -118,4 +117,20 @@ def create_vm(vm: WebosDevice):
     except:
         print("creation error !!!")
     else:
-        attach_storage(VBOXM, name, vm.image)
+        if vm.image: # TODO: just create a vm without an image?
+            attach_storage(VBOXM, name, vm.image)
+        
+def start_vm(vm: WebosDevice):
+    """start a vm
+
+    Args:
+        vm (WebosDevice): vm object
+    """
+    if is_vm_exists(vm.name):
+        if is_safe_to_create(vm.name): # TODO: check image is attached meaning for now, we must create a vm with -i option
+            try:
+                command = [VBOXM] + ['startvm', vm.name]
+                subprocess.call(command, stdin=STDIN)
+            except:
+                print("start error")
+    

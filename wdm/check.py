@@ -15,13 +15,16 @@ def get_vboxmanage(command):
     else:
         return command, version
 
-def is_vm_exists(vmcmd, name):
+VBOXM, VBOXVER = get_vboxmanage("vboxmanage")
+VBOXVER = str(VBOXVER, 'utf-8').split('\n')[0]
+
+def is_vm_exists(name):
     """Check the given vm is exists
 
     Args:
-        vmcmd (string): command name of virtualizer
         name (string): target name of vm
     """
+    vmcmd = VBOXM
     command = [vmcmd] + ['list', 'vms']
 
     try:
@@ -57,20 +60,18 @@ def is_vm_running(vmcmd, name):
             return True
     return False
 
-def is_safe_to_create(name):
+def is_safe_to_create(name): # TODO: need to rename the method name
     """Check if the device is running
     
     :param name:
         the name of device
     """
     
-    VBOXM, VBOXVER = get_vboxmanage("vboxmanage")
     if VBOXM == None:
         print("Please install virtualbox.")
         return False
-    VBOXVER = str(VBOXVER, 'utf-8').split('\n')[0]
 
-    if is_vm_exists(VBOXM, name) and is_vm_running(VBOXM, name):
+    if is_vm_exists(name) and is_vm_running(VBOXM, name):
         return False
     else:
         return True

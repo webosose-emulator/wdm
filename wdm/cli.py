@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from wdm import __version__
 from wdm import WebosDevice
-from wdm.wdm import create_vm
+from wdm.wdm import create_vm, start_vm
 
 def main():
     """Command line application to manage webOS Emulators"""
@@ -16,6 +16,9 @@ def main():
         vm = WebosDevice("webos-imagex")
         vm.image = args.image
         create_vm(vm)  # TODO: create wdm class and use
+    elif args.start:
+        vm = WebosDevice("webos-imagex") # TODO: vm to pre-created?
+        start_vm(vm)
     else:
         parser.print_help()
 
@@ -36,6 +39,13 @@ def _parse_args(parser: argparse.ArgumentParser, args: Optional[List] = None) ->
         "-i",
         "--image",
         help="specify virtualbox image file",
+    )
+    parser.add_argument(
+        "-s",
+        "--start",
+        action="store_true",
+        dest="start",
+        help="Start a default webOS device",
     )
         
     return parser.parse_args(args)
