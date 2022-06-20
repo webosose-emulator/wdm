@@ -16,7 +16,8 @@ def get_vboxmanage(command):
         return command, version
 
 VBOXM, VBOXVER = get_vboxmanage("vboxmanage")
-VBOXVER = str(VBOXVER, 'utf-8').split('\n')[0]
+if VBOXVER:
+    VBOXVER = str(VBOXVER, 'utf-8').split('\n')[0]
 
 def is_vm_exists(name):
     """Check the given vm is exists
