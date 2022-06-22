@@ -9,7 +9,7 @@ from wdm import WebosDevice
 # TODO: set logging level
 STDIN = DEVNULL  # quiet, None for info level
 
-from wdm.check import get_vboxmanage, is_safe_to_create, is_vm_exists
+from wdm.check import get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
 from wdm.check import VBOXM
 
 def detach_storage(name):
@@ -133,4 +133,19 @@ def start_vm(vm: WebosDevice):
                 subprocess.call(command, stdin=STDIN)
             except:
                 print("start error")
-    
+
+def stop_vm(vm: WebosDevice):
+    """stop a vm
+
+    Args:
+        vm (WebosDevice): vm object
+    """
+    if is_vm_exists(vm.name):
+        if is_vm_running(vm.name):
+            try:
+                command = [VBOXM] + ['controlvm', vm.name, 'poweroff']
+                subprocess.call(command, stdin=STDIN)
+            except:
+                print("stop error")
+        else:
+            print("vm is not running.")

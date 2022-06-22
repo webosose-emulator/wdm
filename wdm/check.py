@@ -40,13 +40,13 @@ def is_vm_exists(name):
             return True
     return False
 
-def is_vm_running(vmcmd, name):
+def is_vm_running(name):
     """Check the given vm is running
 
     Args:
-        vmcmd (string): command name of virtualizer
         name (string): target name of vm
     """
+    vmcmd = VBOXM
     command = [vmcmd] + ['list', 'runningvms']
 
     try:
@@ -72,7 +72,7 @@ def is_safe_to_create(name): # TODO: need to rename the method name
         print("Please install virtualbox.")
         return False
 
-    if is_vm_exists(name) and is_vm_running(VBOXM, name):
+    if is_vm_exists(name) and is_vm_running(name):
         return False
     else:
         return True
