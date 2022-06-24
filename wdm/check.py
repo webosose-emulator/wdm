@@ -76,4 +76,21 @@ def is_safe_to_create(name): # TODO: need to rename the method name
         return False
     else:
         return True
-    
+
+def detach_image(name):
+    """Detach image from the given vm
+
+    Args:
+        name (string): target name of vm
+    """
+    vmcmd = VBOXM
+    command = [vmcmd] + ["storageattach", name, "--storagectl", name,
+                         "--type", "hdd", "--medium", "emptydrive",
+                         "--port", "0", "--device", "0"]
+
+    try:
+        subprocess.call(command, stdin=STDIN)
+    except:
+        print("detach error")
+        return False
+    return True

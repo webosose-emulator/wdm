@@ -5,7 +5,7 @@ from typing import List, Optional
 
 from wdm import __version__
 from wdm import WebosDevice
-from wdm.wdm import create_vm, start_vm, stop_vm
+from wdm.wdm import create_vm, delete_vm, start_vm, stop_vm
 
 def main():
     """Command line application to manage webOS Emulators"""
@@ -22,6 +22,9 @@ def main():
     elif args.stop:
         vm = WebosDevice("webos-imagex") # TODO: vm to pre-created?
         stop_vm(vm)
+    elif args.delete:
+        vm = WebosDevice("webos-imagex") # TODO: vm to pre-created?
+        delete_vm(vm)
     else:
         parser.print_help()
 
@@ -56,6 +59,13 @@ def _parse_args(parser: argparse.ArgumentParser, args: Optional[List] = None) ->
         action="store_true",
         dest="stop",
         help="Stop a default webOS device",
+    )
+    parser.add_argument(
+        "-d",
+        "--delete",
+        action="store_true",
+        dest="delete",
+        help="Delete a default webOS device",
     )
         
     return parser.parse_args(args)

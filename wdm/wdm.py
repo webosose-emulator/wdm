@@ -9,7 +9,7 @@ from wdm import WebosDevice
 # TODO: set logging level
 STDIN = DEVNULL  # quiet, None for info level
 
-from wdm.check import get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
+from wdm.check import detach_image, get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
 from wdm.check import VBOXM
 
 def detach_storage(name):
@@ -127,6 +127,7 @@ def start_vm(vm: WebosDevice):
         vm (WebosDevice): vm object
     """
     if is_vm_exists(vm.name):
+        # TODO: use is_vm_running below
         if is_safe_to_create(vm.name): # TODO: check image is attached meaning for now, we must create a vm with -i option
             try:
                 command = [VBOXM] + ['startvm', vm.name]
@@ -149,3 +150,20 @@ def stop_vm(vm: WebosDevice):
                 print("stop error")
         else:
             print("vm is not running.")
+
+def delete_vm(vm: WebosDevice):
+    """delete a vm
+
+    Args:
+        vm (WebosDevice): vm object
+    """
+    if is_vm_exists(vm.name):
+        if not is_vm_running(vm.name):
+            if detach_image(vm.name):
+                try:
+                    command = [VBOXM] + ['unregistervm', vm.name, '--delete']
+                    subprocess.call(command, stdin=STDIN)
+                except:
+                    print("delete error")
+        else:
+            print("vm is running. please stop vm before delete")
