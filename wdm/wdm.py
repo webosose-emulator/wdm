@@ -2,6 +2,7 @@
 
 # TODO: make wdm class
 
+import logging
 import subprocess
 from subprocess import DEVNULL # TODO: check Python 3.3 above
 from wdm import WebosDevice
@@ -68,12 +69,12 @@ def create_vm(vm: WebosDevice):
     """
     name = vm.name
     if is_safe_to_create(name):
-        print(name, "is safe to create.")
+        logging.info("%s is safe to create." % name)
         remove_vm(name)
     
     # TODO: error handling
     try:
-        print("creating vm....")
+        logging.info("creating vm....")
         command = [VBOXM] + ['createvm', '--ostype', 'Linux_64', '--register', '--name', name]
         subprocess.call(command, stdin=STDIN)
         command = [VBOXM] + ['storagectl', name, '--add', 'ide', '--name', name]

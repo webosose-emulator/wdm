@@ -2,6 +2,7 @@
 import argparse
 import sys
 from typing import List, Optional
+import logging
 
 from wdm import __version__
 from wdm import WebosDevice
@@ -9,9 +10,13 @@ from wdm.wdm import create_vm, delete_vm, start_vm, stop_vm
 
 def main():
     """Command line application to manage webOS Emulators"""
+    logging.basicConfig(format='[%(levelname)s] %(message)s')
     parser = argparse.ArgumentParser(description=main.__doc__)
     args = _parse_args(parser)
     
+    if args.debug:
+        logging.getLogger().setLevel(logging.DEBUG)
+
     if args.create:
         vm = WebosDevice("webos-imagex")
         vm.image = args.image
@@ -61,11 +66,17 @@ def _parse_args(parser: argparse.ArgumentParser, args: Optional[List] = None) ->
         help="Stop a default webOS device",
     )
     parser.add_argument(
-        "-d",
         "--delete",
         action="store_true",
         dest="delete",
         help="Delete a default webOS device",
+    )
+    parser.add_argument(
+        "-d",
+        "--debug",
+        action="store_true",
+        dest="debug",
+        help="Show debug info",
     )
         
     return parser.parse_args(args)
