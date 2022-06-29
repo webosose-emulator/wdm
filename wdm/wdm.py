@@ -148,6 +148,7 @@ def stop_vm(vm: WebosDevice):
                 command = [VBOXM] + ['controlvm', vm.name, 'poweroff']
                 subprocess.call(command, stdin=STDIN)
             except:
+                logging.debug("power off vm goes wrong!")
                 print("stop error")
         else:
             print("vm is not running.")
