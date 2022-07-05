@@ -59,7 +59,6 @@ def _parse_args(parser: argparse.ArgumentParser, args: Optional[List] = None) ->
         help="Start a default webOS device",
     )
     parser.add_argument(
-        "-st",
         "--stop",
         action="store_true",
         dest="stop",
