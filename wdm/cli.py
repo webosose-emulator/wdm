@@ -6,7 +6,7 @@ import logging
 
 from wdm import __version__
 from wdm import WebosDevice
-from wdm.wdm import create_vm, delete_vm, start_vm, stop_vm
+from wdm.wdm import create_vm, delete_vm, start_vm, stop_vm, VM_JSON
 
 def main():
     """Command line application to manage webOS Emulators"""
@@ -20,6 +20,8 @@ def main():
     if args.create:
         vm = WebosDevice("webos-imagex")
         vm.image = args.image
+        if VM_JSON['ram']:
+            vm.ram = VM_JSON['ram']
         create_vm(vm)  # TODO: create wdm class and use
     elif args.start:
         vm = WebosDevice("webos-imagex") # TODO: vm to pre-created?

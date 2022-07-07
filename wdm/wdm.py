@@ -4,6 +4,8 @@
 
 import logging
 import subprocess
+import os
+import json
 from subprocess import DEVNULL # TODO: check Python 3.3 above
 from wdm import WebosDevice
 
@@ -12,6 +14,9 @@ STDIN = DEVNULL  # quiet, None for info level
 
 from wdm.check import detach_image, get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
 from wdm.check import VBOXM
+
+here = os.path.abspath(os.path.dirname(__file__))
+VM_JSON = json.loads(open(os.path.join(here, "wdm.json"), encoding='utf-8').read())
 
 def detach_storage(name):
     """detach the image from the vm

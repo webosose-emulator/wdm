@@ -60,7 +60,12 @@ class WebosDevice:
     def image(self, value):
         """Sets the image"""
         self._image = value
-        
+
+    @ram.setter
+    def ram(self, value):
+        """Sets the ram"""
+        self._ram = value
+
     def create(self):
         """Create a webOS device
             
