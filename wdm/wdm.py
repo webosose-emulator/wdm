@@ -6,8 +6,10 @@ import logging
 import subprocess
 import os
 import json
-from subprocess import DEVNULL # TODO: check Python 3.3 above
+from subprocess import DEVNULL
+from sys import stderr # TODO: check Python 3.3 above
 from wdm import WebosDevice
+from wdm.exceptions import DetachError
 
 # TODO: set logging level
 STDIN = DEVNULL  # quiet, None for info level
@@ -59,8 +61,10 @@ def remove_vm(name):
     if is_vm_exists(name):
         detach_storage(name)
         command = [VBOXM] + ['unregistervm', name, '--delete']
-        if subprocess.call(command, stdin=STDIN) == 0:
+        if subprocess.call(command, stdin=STDIN, stderr=DEVNULL) == 0:
             return True
+        else:
+            raise DetachError(vmname=name)
     return False
 
 def create_vm(vm: WebosDevice):
@@ -75,7 +79,11 @@ def create_vm(vm: WebosDevice):
     name = vm.name
     if is_safe_to_create(name):
         logging.info("%s is safe to create." % name)
-        remove_vm(name)
+        try:
+            remove_vm(name)
+        except DetachError as e:
+            logging.error("wdm error : %s" % e)
+            return False
     
     # TODO: error handling
     try:
