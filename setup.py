@@ -47,6 +47,7 @@ setup(
     keywords='wdm',
     name='wdm',
     packages=find_packages(include=['wdm', 'wdm.*']),
+    package_data={'wdm': ['wdm.json']},
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/webosose-emulator/wdm',
