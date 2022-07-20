@@ -1,3 +1,4 @@
+import logging
 import subprocess
 from subprocess import DEVNULL   # TODO: check Python 3.3 above
 import re
@@ -69,7 +70,7 @@ def is_safe_to_create(name): # TODO: need to rename the method name
     """
     
     if VBOXM == None:
-        print("Please install virtualbox.")
+        print("wdm : Please install virtualbox.")
         return False
 
     if is_vm_exists(name) and is_vm_running(name):
@@ -88,9 +89,7 @@ def detach_image(name):
                          "--type", "hdd", "--medium", "emptydrive",
                          "--port", "0", "--device", "0"]
 
-    try:
-        subprocess.call(command, stdin=STDIN)
-    except:
-        print("detach error")
+    if subprocess.call(command, stdin=STDIN) != 0:
+        logging.debug("detach error")
         return False
     return True

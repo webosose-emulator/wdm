@@ -55,7 +55,7 @@ def remove_vm(name):
         name (str): vm name
     """
     if VBOXM == None:
-        print("Please install virtualbox.")
+        print("wdm : Please install virtualbox.")
         return False
     
     if is_vm_exists(name):
@@ -89,48 +89,49 @@ def create_vm(vm: WebosDevice):
     try:
         logging.info("creating vm....")
         command = [VBOXM] + ['createvm', '--ostype', 'Linux_64', '--register', '--name', name]
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         command = [VBOXM] + ['storagectl', name, '--add', 'ide', '--name', name]
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         command = [VBOXM] + ['modifyvm', name, '--boot1', 'disk', '--boot2', 'none', '--boot3', 'none', '--boot4', 'none']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # setting memory, videoram and cpu
         command = [VBOXM] + ['modifyvm', name, '--memory', vm.ram, '--vram', vm.vram, '--ioapic', 'on', '--cpus', vm.cpus]
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # setting graphics stuffs
         command = [VBOXM] + ['modifyvm', name, '--graphicscontroller', 'vmsvga']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         command = [VBOXM] + ['modifyvm', name, '--accelerate3d', 'on']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # set usb tablet and sound
         command = [VBOXM] + ['modifyvm', name, '--mouse', 'usbtablet', '--audio', 'pulse', '--audioout', 'on', '--audioin', 'on']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # setting network
         command = [VBOXM] + ['modifyvm', name, '--nic1', 'nat', '--natpf1', 'ssh,tcp,,'+ vm.hostssh  +',,22']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         command = [VBOXM] + ['modifyvm', name, '--natpf1', 'web-inspector,tcp,,9998,,9998']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         command = [VBOXM] + ['modifyvm', name, '--natpf1', 'enact-browser-web-inspector,tcp,,9223,,9999']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # serial to null
         command = [VBOXM] + ['modifyvm', name, '--uart1', '0x3f8', '4', '--uartmode1', 'file', '/dev/null']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # two display
         command = [VBOXM] + ['modifyvm', name, '--monitorcount', '2']
-        subprocess.call(command, stdin=STDIN)
+        subprocess.check_call(command, stdin=STDIN)
         
         # scale factor to 0.7
         command = [VBOXM] + ['setextradata', name, 'GUI/ScaleFactor', '0.7']
-        subprocess.call(command, stdin=STDIN)
-    except:
-        print("creation error !!!")
-    else:
+        subprocess.check_call(command, stdin=STDIN)
+    except subprocess.CalledProcessError as e:
+        print("wdm : creation error")
+        logging.debug("creation error : %s" % e)
+    else: # creation success
         if vm.image: # TODO: just create a vm without an image?
             attach_storage(VBOXM, name, vm.image)
         
@@ -143,11 +144,9 @@ def start_vm(vm: WebosDevice):
     if is_vm_exists(vm.name):
         # TODO: use is_vm_running below
         if is_safe_to_create(vm.name): # TODO: check image is attached meaning for now, we must create a vm with -i option
-            try:
-                command = [VBOXM] + ['startvm', vm.name]
-                subprocess.call(command, stdin=STDIN)
-            except:
-                print("start error")
+            command = [VBOXM] + ['startvm', vm.name]
+            if subprocess.call(command, stdin=STDIN) != 0:
+                print("wdm : start error")
 
 def stop_vm(vm: WebosDevice):
     """stop a vm
@@ -157,14 +156,12 @@ def stop_vm(vm: WebosDevice):
     """
     if is_vm_exists(vm.name):
         if is_vm_running(vm.name):
-            try:
-                command = [VBOXM] + ['controlvm', vm.name, 'poweroff']
-                subprocess.call(command, stdin=STDIN)
-            except:
+            command = [VBOXM] + ['controlvm', vm.name, 'poweroff']
+            if subprocess.call(command, stdin=STDIN) != 0:
                 logging.debug("power off vm goes wrong!")
-                print("stop error")
+                print("wdm : stop error")
         else:
-            print("vm is not running.")
+            print("wdm : vm is not running.")
 
 def delete_vm(vm: WebosDevice):
     """delete a vm
@@ -175,10 +172,11 @@ def delete_vm(vm: WebosDevice):
     if is_vm_exists(vm.name):
         if not is_vm_running(vm.name):
             if detach_image(vm.name):
-                try:
-                    command = [VBOXM] + ['unregistervm', vm.name, '--delete']
-                    subprocess.call(command, stdin=STDIN)
-                except:
-                    print("delete error")
+                command = [VBOXM] + ['unregistervm', vm.name, '--delete']
+                if subprocess.call(command, stdin=STDIN) != 0:
+                    logging.error("wdm error : delete_vm failed")
+                    logging.debug("reason : unregistervm failed ")
+            else:
+                print("wdm : delete_vm failed")
         else:
-            print("vm is running. please stop vm before delete")
+            print("wdm : vm is running. please stop vm before delete")
