@@ -54,7 +54,11 @@ def is_vm_running(name):
         sp = subprocess.Popen(command, stdin=DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         result, error = sp.communicate()
     except:
+        print("wdm : is_vm_running subprocess.Popen error")
         return False
+    if error:
+       print("wdm : Popen error %s" % error)
+       return False
     result = str(result, 'utf-8').split('\n')
     pattern = "^\"" + name + "\""
     for i in result:
