@@ -6,6 +6,14 @@ import re
 # TODO: set logging level
 STDIN = DEVNULL  # quiet, None for info level
 
+def get_stderr():
+    """get stderr log level by int
+    """
+    if logging.root.level == logging.DEBUG:
+        return None
+    else:
+        return DEVNULL
+
 def get_vboxmanage(command):
     """Get the full path of vboxmanage"""
     try:
@@ -93,7 +101,7 @@ def detach_image(name):
                          "--type", "hdd", "--medium", "emptydrive",
                          "--port", "0", "--device", "0"]
 
-    if subprocess.call(command, stdin=STDIN) != 0:
+    if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) != 0:
         logging.debug("detach error")
         return False
     return True

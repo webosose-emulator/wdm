@@ -14,7 +14,7 @@ from wdm.exceptions import DetachError
 # TODO: set logging level
 STDIN = DEVNULL  # quiet, None for info level
 
-from wdm.check import detach_image, get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
+from wdm.check import detach_image, get_stderr, get_vboxmanage, is_safe_to_create, is_vm_exists, is_vm_running
 from wdm.check import VBOXM
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -145,7 +145,7 @@ def start_vm(vm: WebosDevice):
         # TODO: use is_vm_running below
         if is_safe_to_create(vm.name): # TODO: check image is attached meaning for now, we must create a vm with -i option
             command = [VBOXM] + ['startvm', vm.name]
-            if subprocess.call(command, stdin=STDIN) != 0:
+            if subprocess.call(command, stdin=STDIN , stderr=get_stderr()) != 0:
                 print("wdm : start error")
 
 def stop_vm(vm: WebosDevice):
