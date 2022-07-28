@@ -29,7 +29,7 @@ def detach_storage(name):
     vmcmd = VBOXM
     command = [vmcmd] + ['storageattach', name, '--storagectl', name, '--type',
                          'hdd', '--medium', 'emptydrive', '--port', '0', '--device', '0']
-    if subprocess.call(command, stdin=STDIN) == 0:
+    if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) == 0:
         return True
     else:
         return False
@@ -43,7 +43,7 @@ def attach_storage(vmcmd, name, vmimage):
     """
     command = [vmcmd] + ['storageattach', name, '--storagectl', name, '--type',
                          'hdd', '--port', '0', '--device', '0', '--medium', vmimage]
-    if subprocess.call(command, stdin=STDIN) == 0:
+    if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) == 0:
         return True
     else:
         return False
@@ -61,7 +61,7 @@ def remove_vm(name):
     if is_vm_exists(name):
         detach_storage(name)
         command = [VBOXM] + ['unregistervm', name, '--delete']
-        if subprocess.call(command, stdin=STDIN, stderr=DEVNULL) == 0:
+        if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) == 0:
             return True
         else:
             raise DetachError(vmname=name)
@@ -157,7 +157,7 @@ def stop_vm(vm: WebosDevice):
     if is_vm_exists(vm.name):
         if is_vm_running(vm.name):
             command = [VBOXM] + ['controlvm', vm.name, 'poweroff']
-            if subprocess.call(command, stdin=STDIN) != 0:
+            if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) != 0:
                 logging.debug("power off vm goes wrong!")
                 print("wdm : stop error")
         else:
@@ -173,7 +173,7 @@ def delete_vm(vm: WebosDevice):
         if not is_vm_running(vm.name):
             if detach_image(vm.name):
                 command = [VBOXM] + ['unregistervm', vm.name, '--delete']
-                if subprocess.call(command, stdin=STDIN) != 0:
+                if subprocess.call(command, stdin=STDIN, stderr=get_stderr()) != 0:
                     logging.error("wdm error : delete_vm failed")
                     logging.debug("reason : unregistervm failed ")
             else:
